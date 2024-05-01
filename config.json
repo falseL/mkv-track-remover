@@ -9,8 +9,8 @@
         "enabled": false,
         "keep_languages": ["chi"]
     },
-    "input_path": ["D:/temp"],
-    "path_suffix": "/clean",
-    "log_level": "debug",
-    "file_extension": "mkv"
+    "input_paths": ["D:/temp"],
+    "file_suffix": ".cleaned",
+    "file_extension": "mkv",
+    "enable_threading": true
 }
