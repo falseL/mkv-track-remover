@@ -1,82 +1,65 @@
-import os
 import json
+from pathlib import Path
 from pymkv import MKVFile
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
 
 class MKVTrackRemover:
     def __init__(self, config_path):
         self.config = self.load_config(config_path)
+        self.validate_config()
 
     @staticmethod
     def load_config(path):
         with open(path, 'r') as file:
             config = json.load(file)
         return config
+    
+    def validate_config(self):
+        required_keys = ["input_paths", "file_extension", "audio", "subtitle", "enable_threading"]
+        for key in required_keys:
+            if key not in self.config:
+                raise ValueError(f"Configuration key '{key}' not found.")
 
     def get_video_list(self):
         file_list = []
         for path in self.config["input_paths"]:
-            if(os.path.isfile(path)):
+            path_obj = Path(path)
+            if path_obj.is_file():
                 file_list.append(path)
-            else:
-                ext = self.config["file_extension"]
-                for file in os.listdir(path):
-                    if file.endswith(ext):
-                        file_list.append(os.path.join(path, file))
+            elif path_obj.is_dir():
+                file_list.extend(path_obj.glob(f'*.{self.config["file_extension"]}'))
         return file_list
-
-    def remove_tracks_from_mkv(self, mkv, tracks_to_remove):
-        for track in tracks_to_remove:
-            mkv.remove_track(track.track_id)
 
     def filter_tracks(self, mkv):
         tracks_to_remove = []
         self.filter_audio_tracks(mkv, tracks_to_remove)
         self.filter_subtitle_tracks(mkv, tracks_to_remove)
-        return tracks_to_remove
-    
+        return [track.track_id for track in tracks_to_remove]
+
     def filter_audio_tracks(self, mkv, tracks_to_remove):
-        audio_config = self.config["audio"]
-        if not audio_config["enabled"]: 
+        if not self.config["audio"]["enabled"]:
             return
-        audio_tracks = [track for track in mkv.tracks if track.track_type == 'audio']
-        # If there is only one track, keep it
-        if len(audio_tracks) == 1: 
-            return
-        for track in audio_tracks:
-            if audio_config["keep_only_default"] and not track.default_track:
+        for track in mkv.tracks:
+            if track.track_type == 'audio' and (
+                (self.config["audio"]["keep_only_default"] and not track.default_track) or
+                (track.language not in self.config["audio"]["keep_languages"]) or
+                (self.config["audio"]["remove_commentary"] and "commentary" in (track.track_name or "").lower())
+            ):
                 tracks_to_remove.append(track)
-            elif track.language not in audio_config["keep_languages"]:
-                tracks_to_remove.append(track)
-            elif audio_config["remove_commentary"] and self.track_is_commentary(track):
-                tracks_to_remove.append(track)
-    
-    def track_is_commentary(self, track):
-        return track.track_name is not None and "commentary" in track.track_name.lower()
-    
+
     def filter_subtitle_tracks(self, mkv, tracks_to_remove):
-        subtitle_config = self.config["subtitle"]
-        if not subtitle_config["enabled"]: 
+        if not self.config["subtitle"]["enabled"]:
             return
-        subtitle_tracks = [track for track in mkv.tracks if track.track_type == 'subtitles']
-        # If there is only one track, keep it
-        if len(subtitle_tracks) == 1: 
-            return
-        for track in subtitle_tracks:
-            if track.language not in subtitle_config["keep_languages"]:
-                mkv.remove_track(track.track_id)
-    
+        for track in mkv.tracks:
+            if track.track_type == 'subtitles' and track.language not in self.config["subtitle"]["keep_languages"]:
+                tracks_to_remove.append(track)
+
     def mux_video(self, video_path):
         mkv = MKVFile(video_path)
         tracks_to_remove = self.filter_tracks(mkv)
-        self.remove_tracks_from_mkv(mkv, tracks_to_remove)
-        if self.config["file_suffix"]:
-            path = Path(video_path)
-            output_path = path.with_name(path.stem + self.config["file_suffix"] + path.suffix)
-        else:
-            print(f"Skipping: No file suffix specified in config file.")
-            return
+        for track_id in tracks_to_remove:
+            mkv.remove_track(track_id)
+        output_path = Path(video_path).with_suffix(self.config.get("file_suffix", "") + ".mkv")
         mkv.mux(output_path)
         print(f'Muxed and saved: {output_path}')
 

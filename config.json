@@ -1,15 +1,18 @@
 {
-    "audio":{
+    "audio": {
         "enabled": true,
         "keep_only_default": false,
         "remove_commentary": true,
-        "keep_languages": ["jpn","eng"]
+        "keep_languages": ["jpn", "chi"]
     },
-    "subtitle":{
+    "subtitle": {
         "enabled": false,
         "keep_languages": ["chi"]
     },
-    "input_paths": ["D:/temp"],
+    "input_paths": [
+        "D:/temp",
+        "D:/temp/test/test.mkv"
+    ],
     "file_suffix": ".cleaned",
     "file_extension": "mkv",
     "enable_threading": true
