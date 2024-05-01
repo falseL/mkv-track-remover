@@ -19,7 +19,6 @@ Before running the MKV Track Remover, ensure you have completed the following st
    ```
 4. Add MKVToolNix to the system's PATH: Ensure that MKVToolNix is accessible from the command line by adding it to your system's PATH.
 5. Update the config file to match your use case.
-6. Execute the script: Start processing your MKV files by running the script.
 
 ## Caution
 This tool has not been thoroughly tested. Use it at your own risk.
