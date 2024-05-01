@@ -1,0 +1,16 @@
+{
+    "audio":{
+        "enabled": true,
+        "keep_only_default": false,
+        "remove_commentary": true,
+        "keep_languages": ["jpn","eng"]
+    },
+    "subtitle":{
+        "enabled": false,
+        "keep_languages": ["chi"]
+    },
+    "input_path": ["D:/temp"],
+    "path_suffix": "/clean",
+    "log_level": "debug",
+    "file_extension": "mkv"
+}
