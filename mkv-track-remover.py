@@ -34,7 +34,10 @@ class MKVTrackRemover:
         tracks_to_remove = []
         self.filter_audio_tracks(mkv, tracks_to_remove)
         self.filter_subtitle_tracks(mkv, tracks_to_remove)
-        return [track.track_id for track in tracks_to_remove]
+        tracks_to_remove_ids = [track.track_id for track in tracks_to_remove]
+        # Sort in descending order to avoid issues with track removal
+        tracks_to_remove_ids_sorted_desc = sorted(tracks_to_remove_ids, reverse=True)
+        return tracks_to_remove_ids_sorted_desc
 
     def filter_audio_tracks(self, mkv, tracks_to_remove):
         if not self.config["audio"]["enabled"]:
