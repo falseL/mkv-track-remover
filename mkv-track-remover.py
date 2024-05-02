@@ -59,7 +59,7 @@ class MKVTrackRemover:
 
     def mux_video(self, video_path):
         try:
-            mkv = MKVFile(video_path)
+            mkv = MKVFile(video_path, mkvmerge_path=self.config.get("mkvmerge_path", None))
             tracks_to_remove = self.filter_tracks(mkv)
             for track_id in tracks_to_remove:
                 mkv.remove_track(track_id)

@@ -14,5 +14,6 @@
     ],
     "file_suffix": ".cleaned",
     "file_extension": "mkv",
+    "mkvmerge_path": "C:/Program Files/MKVToolNix/mkvmerge.exe",
     "enable_threading": true
 }
