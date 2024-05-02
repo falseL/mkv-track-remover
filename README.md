@@ -15,7 +15,7 @@ Before running the MKV Track Remover, ensure you have completed the following st
 1. **Install MKVToolNix**: Download and install it from [here](https://mkvtoolnix.download/).
 2. **Install pymkv**: Install this Python library which serves as an interface to MKVToolNix.
    ```
-   pip install pymkv
+   pip install git+https://github.com/sheldonkwoodward/pymkv.git@release/1.0.9 
    ```
 4. Add MKVToolNix to the system's PATH: Ensure that MKVToolNix is accessible from the command line by adding it to your system's PATH.
 5. Update the config file to match your use case.
