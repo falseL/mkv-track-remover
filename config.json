@@ -1,7 +1,7 @@
 {
     "audio": {
         "enabled": true,
-        "keep_only_default": false,
+        "keep_only_default": true,
         "remove_commentary": true,
         "keep_languages": ["jpn", "chi"]
     },
@@ -10,8 +10,7 @@
         "keep_languages": ["chi"]
     },
     "input_paths": [
-        "D:/temp",
-        "D:/temp/test/test.mkv"
+        "D:/temp"
     ],
     "file_suffix": ".cleaned",
     "file_extension": "mkv",

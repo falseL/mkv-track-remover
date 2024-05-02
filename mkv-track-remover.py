@@ -79,3 +79,4 @@ class MKVTrackRemover:
 if __name__ == "__main__":
     remover = MKVTrackRemover('config.json')
     remover.process_all_videos()
+    input("Press any key to exit...")
