@@ -58,12 +58,16 @@ class MKVTrackRemover:
                 tracks_to_remove.append(track)
 
     def mux_video(self, video_path):
-        mkv = MKVFile(video_path)
-        tracks_to_remove = self.filter_tracks(mkv)
-        for track_id in tracks_to_remove:
-            mkv.remove_track(track_id)
-        output_path = Path(video_path).with_suffix(self.config.get("file_suffix", "") + ".mkv")
-        mkv.mux(output_path)
+        try:
+            mkv = MKVFile(video_path)
+            tracks_to_remove = self.filter_tracks(mkv)
+            for track_id in tracks_to_remove:
+                mkv.remove_track(track_id)
+            output_path = Path(video_path).with_suffix(self.config.get("file_suffix", "") + ".mkv")
+            mkv.mux(output_path)
+        except Exception as e:
+            print(f'Error processing {video_path}: {e}')
+            return
         print(f'Muxed and saved: {output_path}')
 
     def process_all_videos(self):
